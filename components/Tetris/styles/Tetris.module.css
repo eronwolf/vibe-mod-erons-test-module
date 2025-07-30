@@ -1,0 +1,169 @@
+.tetrisContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  font-family: 'Arial', sans-serif;
+}
+
+.gameBoard {
+  flex: 0 0 auto;
+}
+
+.gameInfo {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 200px;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin: 0 0 20px 0;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.scoreBoard {
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.scoreItem {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.scoreItem:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  font-weight: bold;
+  color: #555;
+}
+
+.value {
+  font-weight: bold;
+  color: #333;
+}
+
+.nextPiece {
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.nextPieceTitle {
+  font-size: 1rem;
+  margin: 0 0 10px 0;
+  text-align: center;
+  color: #555;
+}
+
+.nextPieceCanvas {
+  display: block;
+  margin: 0 auto;
+  border: 1px solid #333;
+}
+
+.controls {
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.controlsTitle {
+  font-size: 1rem;
+  margin: 0 0 10px 0;
+  text-align: center;
+  color: #555;
+}
+
+.controlsList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.controlsList li {
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.soundToggle {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.soundButton {
+  background-color: #555;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.soundButton:hover {
+  background-color: #777;
+}
+
+.startButton, .pauseButton {
+  background-color: #0076ff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: 100%;
+  text-align: center;
+}
+
+.startButton:hover, .pauseButton:hover {
+  background-color: rgba(0, 118, 255, 0.8);
+}
+
+.pauseButton {
+  background-color: #ff7700;
+}
+
+.pauseButton:hover {
+  background-color: rgba(255, 119, 0, 0.8);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .tetrisContainer {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .gameInfo {
+    max-width: 100%;
+    order: 2;
+  }
+  
+  .gameBoard {
+    order: 1;
+    margin-bottom: 20px;
+  }
+}
