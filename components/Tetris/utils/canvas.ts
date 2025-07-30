@@ -1,6 +1,6 @@
 import { Board, Cell } from '../engine/board';
 import { Tetromino } from '../engine/tetrominos';
-import { CELL_SIZE, COLORS } from '../engine/constants';
+import { COLORS } from '../engine/constants';
 
 // Clear the canvas
 export const clearCanvas = (ctx: CanvasRenderingContext2D, width: number, height: number): void => {
@@ -8,9 +8,14 @@ export const clearCanvas = (ctx: CanvasRenderingContext2D, width: number, height
 };
 
 // Draw the grid on the canvas
-export const drawGrid = (ctx: CanvasRenderingContext2D, width: number, height: number): void => {
+export const drawGrid = (
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  cellSize: number
+): void => {
   // Draw vertical lines
-  for (let x = 0; x <= width; x += CELL_SIZE) {
+  for (let x = 0; x <= width; x += cellSize) {
     ctx.beginPath();
     ctx.moveTo(x, 0);
     ctx.lineTo(x, height);
@@ -19,7 +24,7 @@ export const drawGrid = (ctx: CanvasRenderingContext2D, width: number, height: n
   }
 
   // Draw horizontal lines
-  for (let y = 0; y <= height; y += CELL_SIZE) {
+  for (let y = 0; y <= height; y += cellSize) {
     ctx.beginPath();
     ctx.moveTo(0, y);
     ctx.lineTo(width, y);
@@ -34,38 +39,43 @@ export const drawCell = (
   x: number,
   y: number,
   color: string,
+  cellSize: number,
   isGhost: boolean = false
 ): void => {
   const actualColor = isGhost ? COLORS.GHOST : color;
   
   // Fill the cell
   ctx.fillStyle = actualColor;
-  ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+  ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
   
   // Draw the cell border
   ctx.strokeStyle = '#333';
   ctx.lineWidth = 1;
-  ctx.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+  ctx.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
   
   // Add a highlight effect (only for non-ghost pieces)
   if (!isGhost) {
     ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
     ctx.fillRect(
-      x * CELL_SIZE + 1, 
-      y * CELL_SIZE + 1, 
-      CELL_SIZE - 2, 
-      CELL_SIZE / 2 - 1
+      x * cellSize + 1,
+      y * cellSize + 1,
+      cellSize - 2,
+      cellSize / 2 - 1
     );
   }
 };
 
 // Draw the game board on the canvas
-export const drawBoard = (ctx: CanvasRenderingContext2D, board: Board): void => {
+export const drawBoard = (
+  ctx: CanvasRenderingContext2D,
+  board: Board,
+  cellSize: number
+): void => {
   // Draw each cell of the board
   board.forEach((row, y) => {
     row.forEach((cell, x) => {
       if (cell.filled) {
-        drawCell(ctx, x, y, COLORS[cell.color as keyof typeof COLORS]);
+        drawCell(ctx, x, y, COLORS[cell.color as keyof typeof COLORS], cellSize);
       }
     });
   });
@@ -77,6 +87,7 @@ export const drawTetromino = (
   tetromino: Tetromino,
   offsetX: number,
   offsetY: number,
+  cellSize: number,
   isGhost: boolean = false
 ): void => {
   // Draw each cell of the tetromino
@@ -88,6 +99,7 @@ export const drawTetromino = (
           x + offsetX,
           y + offsetY,
           COLORS[tetromino.type],
+          cellSize,
           isGhost
         );
       }
@@ -100,9 +112,10 @@ export const drawGhostPiece = (
   ctx: CanvasRenderingContext2D,
   tetromino: Tetromino,
   offsetX: number,
-  offsetY: number
+  offsetY: number,
+  cellSize: number
 ): void => {
-  drawTetromino(ctx, tetromino, offsetX, offsetY, true);
+  drawTetromino(ctx, tetromino, offsetX, offsetY, cellSize, true);
 };
 
 // Draw the next piece preview
@@ -110,17 +123,18 @@ export const drawNextPiece = (
   ctx: CanvasRenderingContext2D,
   tetromino: Tetromino,
   width: number,
-  height: number
+  height: number,
+  cellSize: number
 ): void => {
   // Clear the canvas
   clearCanvas(ctx, width, height);
   
   // Calculate the center position
-  const offsetX = Math.floor((width / CELL_SIZE - tetromino.width) / 2);
-  const offsetY = Math.floor((height / CELL_SIZE - tetromino.height) / 2);
+  const offsetX = Math.floor((width / cellSize - tetromino.width) / 2);
+  const offsetY = Math.floor((height / cellSize - tetromino.height) / 2);
   
   // Draw the tetromino
-  drawTetromino(ctx, tetromino, offsetX, offsetY);
+  drawTetromino(ctx, tetromino, offsetX, offsetY, cellSize);
 };
 
 // Draw game over overlay

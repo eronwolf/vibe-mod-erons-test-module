@@ -5,8 +5,7 @@ import styles from '../styles/home.module.css'
 
 export default () => {
   return (
-    <main className={styles.main}>
-      <h1>Tetris Game</h1>
+    <main className={styles.fullscreen}>
       <TetrisGame />
     </main>
   );

@@ -1,7 +1,30 @@
 // Game board dimensions
 export const BOARD_WIDTH = 10;
 export const BOARD_HEIGHT = 20;
-export const CELL_SIZE = 30;
+export const DEFAULT_CELL_SIZE = 30;
+
+// Function to calculate cell size based on viewport dimensions
+export const calculateCellSize = (
+  containerWidth: number,
+  containerHeight: number
+): number => {
+  // Calculate maximum possible cell size based on width and height
+  const maxCellSizeByWidth = Math.floor(containerWidth / BOARD_WIDTH);
+  const maxCellSizeByHeight = Math.floor(containerHeight / BOARD_HEIGHT);
+  
+  // Use the smaller of the two to ensure the board fits
+  let cellSize = Math.min(maxCellSizeByWidth, maxCellSizeByHeight);
+  
+  // Set a minimum cell size to ensure visibility
+  const MIN_CELL_SIZE = 10;
+  cellSize = Math.max(cellSize, MIN_CELL_SIZE);
+  
+  // Set a maximum cell size to prevent it from being too large
+  const MAX_CELL_SIZE = 40;
+  cellSize = Math.min(cellSize, MAX_CELL_SIZE);
+  
+  return cellSize;
+};
 
 // Game speeds in milliseconds (how often the piece moves down)
 export const SPEED_LEVELS = [

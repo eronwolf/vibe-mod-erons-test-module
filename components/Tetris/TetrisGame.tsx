@@ -6,19 +6,19 @@ import useKeyboardControls from './hooks/useKeyboardControls';
 import useGameLoop from './hooks/useGameLoop';
 import useSoundEffects from './hooks/useSoundEffects';
 import { SoundEffect } from './utils/soundManager';
-import { 
-  GameState, 
-  GameStatus, 
-  createInitialGameState, 
-  moveLeft, 
-  moveRight, 
-  moveDown, 
-  rotatePiece, 
-  hardDrop, 
-  togglePause, 
-  startGame 
+import {
+  GameState,
+  GameStatus,
+  createInitialGameState,
+  moveLeft,
+  moveRight,
+  moveDown,
+  rotatePiece,
+  hardDrop,
+  togglePause,
+  startGame
 } from './engine/gameState';
-import { BOARD_WIDTH, BOARD_HEIGHT, CELL_SIZE } from './engine/constants';
+import { BOARD_WIDTH, BOARD_HEIGHT, DEFAULT_CELL_SIZE, calculateCellSize } from './engine/constants';
 import { drawNextPiece, clearCanvas } from './utils/canvas';
 import styles from './styles/Tetris.module.css';
 
@@ -26,14 +26,39 @@ const TetrisGame: React.FC = () => {
   // Initialize game state
   const [gameState, setGameState] = useState<GameState>(createInitialGameState());
   
-  // Reference for the next piece preview canvas
+  // Reference for the next piece preview canvas and its container
   const nextPieceCanvasRef = useRef<HTMLCanvasElement>(null);
+  const nextPieceContainerRef = useRef<HTMLDivElement>(null);
   
-  // Calculate dimensions
-  const boardWidth = BOARD_WIDTH * CELL_SIZE;
-  const boardHeight = BOARD_HEIGHT * CELL_SIZE;
-  const nextPieceWidth = 4 * CELL_SIZE;
-  const nextPieceHeight = 4 * CELL_SIZE;
+  // State for cell size
+  const [cellSize, setCellSize] = useState(DEFAULT_CELL_SIZE);
+  
+  // Calculate dimensions based on cell size
+  const boardWidth = BOARD_WIDTH * cellSize;
+  const boardHeight = BOARD_HEIGHT * cellSize;
+  const nextPieceWidth = 4 * cellSize;
+  const nextPieceHeight = 4 * cellSize;
+  
+  // Update cell size when window resizes
+  useEffect(() => {
+    const updateCellSize = () => {
+      if (nextPieceContainerRef.current) {
+        // For the next piece preview, we want a smaller cell size
+        const containerWidth = nextPieceContainerRef.current.clientWidth;
+        const newCellSize = Math.floor(containerWidth / 5); // Divide by 5 to leave some margin
+        setCellSize(newCellSize);
+      }
+    };
+    
+    // Initial calculation
+    updateCellSize();
+    
+    // Add resize event listener
+    window.addEventListener('resize', updateCellSize);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', updateCellSize);
+  }, []);
 
   // Initialize sound effects
   const { soundEnabled, playSound, toggleSound } = useSoundEffects();
@@ -134,6 +159,10 @@ const TetrisGame: React.FC = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Update canvas dimensions
+    canvas.width = nextPieceWidth;
+    canvas.height = nextPieceHeight;
+
     // Clear the canvas
     clearCanvas(ctx, nextPieceWidth, nextPieceHeight);
     
@@ -142,8 +171,8 @@ const TetrisGame: React.FC = () => {
     ctx.fillRect(0, 0, nextPieceWidth, nextPieceHeight);
     
     // Draw the next piece
-    drawNextPiece(ctx, gameState.nextPiece, nextPieceWidth, nextPieceHeight);
-  }, [gameState.nextPiece, nextPieceWidth, nextPieceHeight]);
+    drawNextPiece(ctx, gameState.nextPiece, nextPieceWidth, nextPieceHeight, cellSize);
+  }, [gameState.nextPiece, nextPieceWidth, nextPieceHeight, cellSize]);
 
   return (
     <div className={styles.tetrisContainer}>
@@ -167,12 +196,10 @@ const TetrisGame: React.FC = () => {
           </div>
         </div>
         
-        <div className={styles.nextPiece}>
+        <div className={styles.nextPiece} ref={nextPieceContainerRef}>
           <h3 className={styles.nextPieceTitle}>Next Piece</h3>
           <canvas
             ref={nextPieceCanvasRef}
-            width={nextPieceWidth}
-            height={nextPieceHeight}
             className={styles.nextPieceCanvas}
           />
         </div>
